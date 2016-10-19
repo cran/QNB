@@ -1,0 +1,165 @@
+%\VignetteIndexEntry{An introduction to QNB}
+%\VignetteDepends{}
+%\VignetteKeywords{differential methylation}
+%\VignettePackage{QNB}
+
+\documentclass[]{article}
+\usepackage{times}
+\usepackage{hyperref}
+\usepackage[pdftex]{graphicx}
+
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\Rmethod}[1]{{\texttt{#1}}}
+\newcommand{\Rfunarg}[1]{{\texttt{#1}}}
+\newcommand{\Rclass}[1]{{\textit{#1}}}
+\newcommand{\Rcode}[1]{{\texttt{#1}}}
+
+\newcommand{\software}[1]{\textsf{#1}}
+\newcommand{\R}{\software{R}}
+\newcommand{\QNB}{\Rpackage{QNB}}
+\newcommand{\bam}{\texttt{BAM}}
+
+
+\title{An Introduction to \Rpackage{QNB}}
+\author{Lian Liu <liulian19860905@163.com>}
+\date{Modified: 22 Jul, 2016. Compiled: \today }
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+\maketitle
+
+<<options,echo=FALSE>>=
+options(width=60)
+@ 
+
+
+\section{Introduction}
+The \Rpackage{QNB} R-package has been developed for differential methylation analysis. Estimate variance and mean dependence in count data from MeRIP-seq and test for differential methylation based on a model using quadratic-negative-binomial distribution. Please don't hesitate to <liulian19860905@163.com> if you have any problem. The inputs of the main function \Rpackage{qnbtest} are four reads count matrix for IP samples of two conditions and Input samples of two conditions.The \Rpackage{QNB} package fullfills the following one key function:
+\begin{itemize}
+  \item differential methylation analysis based on a model using quadratic-negative-binomial distribution 
+\end{itemize}
+
+We will in the next see how the the main functions can be accomplished in a single command. 
+
+
+\section{Input data}
+As input, the \Rpackage{QNB} package expects count data from two conditions (e.\,g., treated and untreated) as obtained, e.\,g., from MeRIP-Seq, in the form of two rectangular tables of integer values for each condition, one is Input control and another is IP sample.
+The table cell in the $i$-th row and the
+$j$-th column of the table shows the reads count of the methylation site $i$ in sample $j$.
+
+The count values must be raw counts of sequencing
+reads. So, please do not supply other quantities,
+such as (rounded) normalized counts
+-- this will lead to nonsensical results.
+
+\section{Differential Methylation Analysis}
+The main function of \Rfunction{QNB} R-package is to analyse differential methylation. Meths are the reads count matrix of IP samples from two conditions, and unmeths are Input control samples from two condition. To get the differential methylation, we estimate the dispersion for each site between treated(including IP and Input control sample) and untreated(including IP and Input control sample). In addtion, IP and Input control samples must be the same replicates, but it is may be the different replicates under two conditons.
+
+To estimate the dispersion, there are four ways how the empirical dispersion can be computed:
+
+\begin{itemize}
+\item pooled - Use the samples from all conditions with replicates to estimate a single pooled empirical dispersion value, called ``pooled'', and assign it to all samples.
+\item per-condition - For each condition with replicates, compute an empirical dispersion value by considering the data from samples for this condition. The default is per-conditon.
+\item blind - Ignore the sample labels and compute an empirical dispersion value as if all samples were replicates of a single condition. This can be done even if there are no biological replicates. 
+\item auto - select mode according to the size of samples automaticly.
+
+\textbf{Other parameters:}
+
+\item plot.dispersion - the default is TRUE. If \Rcode{plot.dispersion = FALSE}, it will not save the dispersion figure.
+
+\item pvals.only - get pvalue only. If \Rcode{pvals.only = TRUE}, get pvalue only in 
+result matrix. If \Rcode{pvals.only = FALSE}, get pvalue and FDR in result matrix.
+
+\item output.dir - The saved file path. The default is NA. If \Rcode{output.dir = NA}, the path is the current path.
+\end{itemize}
+
+
+Let us firstly load the package and get the toy data (came with the package) ready.
+<<Input file>>=
+library(QNB)
+f1 <- system.file("extdata", "meth1.txt", package="QNB")
+f2 <- system.file("extdata", "meth2.txt", package="QNB")
+f3 <- system.file("extdata", "unmeth1.txt", package="QNB")
+f4 <- system.file("extdata", "unmeth2.txt", package="QNB")
+
+meth1 <- read.table(f1,header=TRUE)
+meth2 <- read.table(f2,header=TRUE)
+unmeth1 <- read.table(f3,header=TRUE)
+unmeth2 <- read.table(f4,header=TRUE)
+head(meth1)
+head(unmeth1)
+@
+
+\subsection{Standard comparison between two experimental conditions}
+
+When there are replicates under two conditions, we could select ``mode=per-condition''
+or ``mode=pooled'' to estimate the dispersion. The default is ``auto''. 
+
+<<per-conditon>>=
+result = qnbtest(meth1, meth2,unmeth1,unmeth2,mode="per-condition")
+head(result)
+@
+
+The results will be saved in the specified output directory, including the dispersion figure(if \Rcode{plot.dispersion=TRUE)} and the result table(including 4 columns
+(pvalue,log2(fold-change),expression,FDR(if \Rcode{pvals.only=FALSE} ))). The following figure is the dispersion figure.The first row is the wild type dispersion of Input and IP samples, and the second row is the DAA dispersion of Input and IP samples.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\linewidth]{dispersion}
+\caption{
+  \textbf{The dispersion of reads count on common scale in DAA dataset.} 
+  A. The dispersion of Input samples. B. The dispersion of IP samples. In each dataset, the variance of two conditions is very similar, but there are slight difference between them. Generally, the variance increases following the feature abundance $\log(\textrm
+{q}+1)$ and absolute methylation level $p$.}
+\label{fig:dispersion}
+\end{figure}
+
+\begin{itemize}
+  \item pvalue - Indicate the significance of the methylation site as an RNA differential methylation site
+  \item log2.fc - log2(Fold-change). log 2 (fold enrichment)  within the peak in the IP sample compared with the input sample.
+  \item q - The expression of each methylation site.
+  \item FDR - fdr of the methylation site, indicating the significance of the peak as an RNA differential methylation site after multiple hypothesis correction.  
+\end{itemize}
+
+\subsection{Comparison without replicates}
+
+If you have replicates for one condition but not for the other,or there are no replicates for tow conditions, you can select ``mode=blind''to estimate the dispersion.
+
+
+<<without replicates>>=
+f1 <- system.file("extdata", "no_rep_meth1.txt", package="QNB")
+f2 <- system.file("extdata", "no_rep_meth2.txt", package="QNB")
+f3 <- system.file("extdata", "no_rep_unmeth1.txt", package="QNB")
+f4 <- system.file("extdata", "no_rep_unmeth2.txt", package="QNB")
+
+no_rep_meth1 <- read.table(f1,header=TRUE)
+no_rep_meth2 <- read.table(f2,header=TRUE)
+no_rep_unmeth1 <- read.table(f3,header=TRUE)
+no_rep_unmeth2 <- read.table(f4,header=TRUE)
+head(no_rep_meth1)
+head(no_rep_unmeth1)
+result = qnbtest(no_rep_meth1, 
+                 no_rep_meth2,
+                 no_rep_unmeth1,
+                 no_rep_unmeth2,
+                 mode="blind")
+@
+
+
+
+\subsection{Select mode automatically}
+
+If you could not decide which mode to estimate dispersion, ``mode=auto''will select suitable way to estimate dispersion according to the replicates.
+
+<<automatically>>=
+result = qnbtest(meth1, meth2,unmeth1,unmeth2)
+@
+
+
+\section{Session Information} 
+<<session info>>=
+sessionInfo()
+@
+
+\end{document}
