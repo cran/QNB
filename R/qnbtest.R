@@ -2,7 +2,6 @@ qnbtest <-
 function(meth1,meth2,unmeth1,unmeth2,
                     mode="auto",
                     plot.dispersion=TRUE,
-                    pvals.only=TRUE,
                     output.dir = NA) {
   print("Estimating dispersion for each RNA methylation site, this will take a while ...")
   if(mode=="per-condition"){
@@ -218,19 +217,12 @@ function(meth1,meth2,unmeth1,unmeth2,
   u2 <- rowSums(t(t(unmeth2)/s_c2))
   mfc <- log2(m1)-log2(m2)
   ufc <- log2(u1)-log2(u2)
-  if(pvals.only){
-    
-    res <- data.frame(res,fc,q0)
+  
+  padj <- p.adjust( res[,1], method="BH" )
+  res <- data.frame(res,fc,q0,padj)
     #res <- res2[,c(1,3:7)]
-    colnames(res) <- c("pvalue","log2.fc","q")
-  }else{
-    padj <- p.adjust( res[,1], method="BH" )
-    res <- data.frame(res,fc,q0,padj)
-    #res <- res2[,c(1,3:7)]
-    colnames(res) <- c("pvalue","log2.fc","q","FDR")
-  }
   #path=getwd()
   path <- paste(output.dir,"dif_meth.xls",sep = '/')
   #path=paste(path,"dif_meth.xls",sep="/")
-  write.table(res,path,sep="\t",col.names=TRUE,row.names =FALSE)
+  write.table(res,path,sep='\t',col.names=TRUE,row.names =FALSE)
   return(res)}

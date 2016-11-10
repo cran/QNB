@@ -26,6 +26,8 @@
       p <- p-max(p)
       p <- exp(p)/sum(exp(p))
       p <- min(1,2*min(sum(p[1:(t1[irow]+1)]),sum(p[(t1[irow]+1):(t[irow]+1)])))- p[(t1[irow]+1)]/2  
+     
+      
       pval4[irow] <- p
     }
     
