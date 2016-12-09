@@ -22,16 +22,16 @@
   par(mfrow=c(2,2))
   
    
-  contour(seq(from=0,to=1,by=0.01),seq(from=0,to=10,by=0.1),w1)
+  contour(seq(from=0,to=1,by=0.01),seq(from=0,to=10,by=0.1),w2)
   title(main="log(w)",sub="untreated Input",ylab="log(q+1)", xlab="p")
   
-  contour(seq(from=0,to=1,by=0.01),seq(from=0,to=10,by=0.1),w2)
+  contour(seq(from=0,to=1,by=0.01),seq(from=0,to=10,by=0.1),w1)
   title(main="log(w)",sub="untreated IP",ylab="log(q+1)", xlab="p") 
   
-  contour(seq(from=0,to=1,by=0.01),seq(from=0,to=10,by=0.1),w3)
+  contour(seq(from=0,to=1,by=0.01),seq(from=0,to=10,by=0.1),w4)
   title(main="log(w)",sub="treated Input",ylab="log(q+1)", xlab="p") 
   
-  contour(seq(from=0,to=1,by=0.01),seq(from=0,to=10,by=0.1),w4)
+  contour(seq(from=0,to=1,by=0.01),seq(from=0,to=10,by=0.1),w3)
   title(main="log(w)",sub="treated IP",ylab="log(q+1)", xlab="p") 
   dev.off()
 }

@@ -25,7 +25,7 @@
 
 \title{An Introduction to \Rpackage{QNB}}
 \author{Lian Liu <liulian19860905@163.com>}
-\date{Modified: 6 Nov, 2016. Compiled: \today }
+\date{Modified: 30 Nov, 2016. Compiled: \today }
 
 \begin{document}
 \SweaveOpts{concordance=TRUE}
@@ -112,7 +112,7 @@ The results will be saved in the specified output directory, including the dispe
 
 \begin{figure}
 \centering
-\includegraphics[width=0.8\linewidth]{dispersion}
+\includegraphics[width=10cm]{dispersion}
 \caption{
   \textbf{The dispersion of reads count on common scale in DAA dataset.} 
 The first row is the wild type dispersion of Input and IP samples, and the second row is the DAA dispersion of Input and IP samples. In each dataset, the variance of two conditions is very similar, but there are slight difference between them. Generally, the variance increases following the feature abundance $\log(\textrm{q}+1)$ and absolute methylation level $p$.}

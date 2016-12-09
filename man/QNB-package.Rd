@@ -19,8 +19,8 @@ including but not limited to RNA BS-Seq, Par-CLIP, RIP-Seq, etc.Please don't hes
 \tabular{ll}{
 Package: \tab QNB\cr
 Type: \tab Package\cr
-Version: \tab 1.0.1\cr
-Date: \tab 2016-11-5\cr
+Version: \tab 1.0.2\cr
+Date: \tab 2016-11-30\cr
 License: \tab GPL-2\cr
 }
 }

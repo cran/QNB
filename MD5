@@ -1,4 +1,4 @@
-48ec0ac1dcd21461004e659f906badbe *DESCRIPTION
+a4c5dc80accc5c4cf17afb49da266386 *DESCRIPTION
 30e60a6af1abbcb9dd5160aab7692c3c *NAMESPACE
 37759f5bec329043e6b0a511b6349ac5 *NEWS
 1461871a63d3a7f223f38018b93e936d *R/baseFitCondition.R
@@ -12,7 +12,7 @@ af0613ae5061bf45f84578a2f0721f45 *R/fittedW.R
 422f1f438494c3691dbe40804f59153d *R/getBaseMean.R
 1d71da30dedf81e64f40b22e9cf05df1 *R/getPoolMean.R
 349b7637a7ab09f7a8cce264521a285f *R/locfitW.R
-3b15124ac37a559848897dfeb1f979df *R/plotDispersion.R
+a9fc9fea3948829f2fcaee755594e4c6 *R/plotDispersion.R
 d44805241ddfe7d561e3227327245aff *R/poolFit.R
 7ae94c4c5a572939e6bce564c85d9bf7 *R/qnbtest.R
 e1913234df1f989419c64e0ff0f4b8d4 *R/quadNBtest.R
@@ -20,8 +20,8 @@ e1913234df1f989419c64e0ff0f4b8d4 *R/quadNBtest.R
 bae87f2edae76a682c7906ff113f6b5c *R/sizeFactor2.R
 e122b6cc8bda22c55b098589fd1416d2 *build/vignette.rds
 5ff75ff7a0bec903c48bbfda61847416 *inst/doc/QNB-Overview.R
-51c82d199711915bb2ff8ac92813f952 *inst/doc/QNB-Overview.Rnw
-673155cab1150e6b6becfe9e44ab9e01 *inst/doc/QNB-Overview.pdf
+762b6b4fc04e8f281891d2cc556a66d6 *inst/doc/QNB-Overview.Rnw
+c1f6935818cbb75d24ce0c78e7d20e55 *inst/doc/QNB-Overview.pdf
 9cab76aba06442356eea4749013f8105 *inst/extdata/meth1.txt
 3271f22a24d27a9921c0a3bfccc4b3bb *inst/extdata/meth2.txt
 7cd8d1cb88e1a8eca439e8da6efc6b07 *inst/extdata/no_rep_meth1.txt
@@ -30,7 +30,7 @@ e122b6cc8bda22c55b098589fd1416d2 *build/vignette.rds
 20e6f4df0f7c5adc4ad5bb2b36ff2fd2 *inst/extdata/no_rep_unmeth2.txt
 03e7ccc14728e3e33496cc44663dccac *inst/extdata/unmeth1.txt
 5895f3076dc45dd483b8b7209764cb1e *inst/extdata/unmeth2.txt
-73097dbc7cf2454497dde8222ebb8932 *man/QNB-package.Rd
+f3837be3966c9407f906b0ed226d96a9 *man/QNB-package.Rd
 8a510a6a1cc7bc8806217a45959f45e7 *man/qnbtest.Rd
-51c82d199711915bb2ff8ac92813f952 *vignettes/QNB-Overview.Rnw
+762b6b4fc04e8f281891d2cc556a66d6 *vignettes/QNB-Overview.Rnw
 3e6940350a25f5248c56864464fae7f5 *vignettes/QNB.bib
