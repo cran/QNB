@@ -7,31 +7,33 @@ This is the main function of differential RNA methylation analysis for MeRIP-seq
 This function tests for differential RNA methylation between two conditions.
 }
 \usage{
-qnbtest(meth1, meth2, unmeth1, unmeth2, 
-        mode="auto", 
-        plot.dispersion=TRUE,
-        output.dir=NA)
+qnbtest(control_ip,treated_ip,control_input,treated_input,
+size.factor=NA,mode="auto",plot.dispersion=TRUE,output.dir = NA)
 }
 
 \arguments{
-  \item{meth1}{
-        a  reads count matrix for IP samples of one condition
+  \item{control_ip}{
+a  reads count data frame for IP samples of control
 }
-  \item{meth2}{
-        a  reads count matrix for IP samples of two condition
+  \item{treated_ip}{
+a  reads count data frame for IP samples of treated 
 }
-  \item{unmeth1}{
-        a  reads count matrix for input samples of one condition
+  \item{control_input}{
+a  reads count data frame for input samples of control
 }
-  \item{unmeth2}{
-        a  reads count matrix for input samples of two condition
+  \item{treated_input}{
+a  reads count data frame for input samples of treated
+}
+  \item{size.factor}{
+A list of size factor. The size factor of the IP and input sample of the biological replicate and directly reflect their sequencing depth. If size.factor=NA, QNB will compute the size factor of IP and input sample of each replicate. If user could provide the size.factor, the name of each term must be control_ip, treated_ip, control_input, treated_input in list. 
 }
   \item{mode}{
 There are four ways how the empirical dispersion can be computed:
 
 \itemize{
   \item{pooled -}{
-Use the samples from all conditions with replicates to estimate a single pooled empirical dispersion value, called "pooled", and assign it to all samples.
+Use the samples from all conditions with replicates to estimate a single pooled empirical dispersion value, called "pooled", and assign it to all samples. In this mode,
+the number of replicates must be the same.
 }
   \item{per-condition -}{
 For each condition with replicates, compute an empirical dispersion value by considering the data from samples for this condition. 
@@ -40,7 +42,7 @@ For each condition with replicates, compute an empirical dispersion value by con
 Ignore the sample labels and compute an empirical dispersion value as if all samples were replicates of a single condition. This can be done even if there are no biological 
 replicates.}
   \item{auto -}{
-Select mode according to the size of samples automaticly.The default is auto.
+Select mode according to the size of samples automaticly.The default is auto. By default, QNB package implements the "per-conditon" mode for a more sensitive estimation of the raw variance parameter when biological replicates are provided; while the "blind" mode is implemented when biological replicates are not available.
 }
 }
 
@@ -48,35 +50,37 @@ Select mode according to the size of samples automaticly.The default is auto.
   \item{plot.dispersion}{
 The default is TRUE. If plot.dispersion=FALSE, it will not save the dispersion figure. 
 }
- 
   \item{output.dir}{
 The saved file path. The default is NA. If output.dir=NA, the path is the current path.
 }
 }
-
-
 \value{
-Results will get a matrix including 4 columns (pvalue, log2.fc, q, FDR).
-
+Results will get a matrix including 7 columns (p.treated, p.control, log2.RR, log2.OR, pvalue, q, padj).
+  \item{p.treated}{
+  The percentage of methylation under treated condition.
+  }
+  \item{p.control}{
+  The percentage of methylation under control condition.
+  }
+  \item{log2.RR}{
+  The normalized risk ratio.
+  }
+   \item{log2.OR}{
+  The normalized odds ratio.
+  }
   \item{pvalue}{
 Indicate the significance of the methylation site as an RNA differential methylation site
 }
-  \item{log2.fc}{
-  The log2 odds ratio between IP sample and Input sample.
-  }
   \item{q}{
   The standardized feature abundance, which is proportional to the expression level of the RNA transcript.
   }
-  \item{FDR}{
-  FDR of the methylation site, indicating the significance of the peak as an RNA differential methylation site after multiple hypothesis correction usting BH method.  
+  \item{padj}{
+  The FDR of the methylation site, indicating the significance of the peak as an RNA differential methylation site after multiple hypothesis correction usting BH method.  
   }
-%%  ~Describe the value returned
 }
-
 \author{
 Lian Liu <liulian19860905@163.com>
 }
-
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \examples{
@@ -84,10 +88,10 @@ Lian Liu <liulian19860905@163.com>
 
 library("QNB")
 
-f1 = system.file("extdata", "meth1.txt", package="QNB")
-f2 = system.file("extdata", "meth2.txt", package="QNB")
-f3 = system.file("extdata", "unmeth1.txt", package="QNB")
-f4 = system.file("extdata", "unmeth2.txt", package="QNB")
+f1 = system.file("extdata", "control_ip.txt", package="QNB")
+f2 = system.file("extdata", "treated_ip.txt", package="QNB")
+f3 = system.file("extdata", "control_input.txt", package="QNB")
+f4 = system.file("extdata", "treated_input.txt", package="QNB")
 
 meth1 = read.table(f1,header=TRUE)
 meth2 = read.table(f2,header=TRUE)
@@ -95,26 +99,38 @@ unmeth1 = read.table(f3,header=TRUE)
 unmeth2 = read.table(f4,header=TRUE)
 
 # When there are replicates under two conditions, we could select 
-# \usage{mode="per-condition"} or \usage{mode="pooled"} to estimate the dispersion. 
-# The default is \usage{mode="auto"}.
+# mode="per-condition" or mode="pooled" to estimate the dispersion. 
+# The default is mode="auto".
 
 result = qnbtest(meth1,meth2,unmeth1,unmeth2,mode="per-condition")
 
+# When size.factor is not NA
+
+## Not run:
+size.factor = list(control_ip=c(0.9,0.9,0.9),
+                   treated_ip=c(0.9,0.9,0.9), 
+                   control_input=c(0.9,0.9,0.9),
+                   treated_input=c(0.9,0.9,0.9))
+                   
+result = qnbtest(meth1,meth2,unmeth1,unmeth2,
+                 size.factor=size.factor,
+                 mode="per-condition")
+## End(Not run)
+
+
 # If you have replicates for one condition but not for the other, or without any 
-# replicates for # two conditions, you can select \usage{mode="blind"} to estimate 
+# replicates for # two conditions, you can select mode="blind" to estimate 
 # the dispersion. 
 
-f1 = system.file("extdata", "no_rep_meth1.txt", package="QNB")
-f2 = system.file("extdata", "no_rep_meth2.txt", package="QNB")
-f3 = system.file("extdata", "no_rep_unmeth1.txt", package="QNB")
-f4 = system.file("extdata", "no_rep_unmeth2.txt", package="QNB")
+f1 = system.file("extdata", "no_rep_controlip.txt", package="QNB")
+f2 = system.file("extdata", "no_rep_treatedip.txt", package="QNB")
+f3 = system.file("extdata", "no_rep_controlinput.txt", package="QNB")
+f4 = system.file("extdata", "no_rep_treatedinput.txt", package="QNB")
 
 no_rep_meth1 = read.table(f1,header=TRUE)
 no_rep_meth2 = read.table(f2,header=TRUE)
 no_rep_unmeth1 = read.table(f3,header=TRUE)
 no_rep_unmeth2 = read.table(f4,header=TRUE)
-head(no_rep_meth1)
-head(no_rep_unmeth1)
 
 ## Not run: 
 result = qnbtest(no_rep_meth1, 
@@ -124,7 +140,7 @@ result = qnbtest(no_rep_meth1,
                  mode="blind")
 ## End(Not run)
 
-# If you could not decide which mode to estimate dispersion, \usage{mode="auto"} 
+# If you could not decide which mode to estimate dispersion, mode="auto" 
 # will select suitable way to estimate dispersion according to the replicates.
 
 ## Not run: 

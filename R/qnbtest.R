@@ -1,149 +1,176 @@
 qnbtest <-
-function(meth1,meth2,unmeth1,unmeth2,
+function(control_ip,treated_ip,control_input,treated_input,
+                    size.factor=NA,
                     mode="auto",
                     plot.dispersion=TRUE,
                     output.dir = NA) {
   print("Estimating dispersion for each RNA methylation site, this will take a while ...")
   if(mode=="per-condition"){
-    mean <- .getBaseMean(meth1,meth2,unmeth1,unmeth2)
-    s_t1 <- mean[[1]]
-    s_t2 <- mean[[2]]
-    s_c1 <- mean[[3]]
-    s_c2 <- mean[[4]]
-    p0 <- mean[[5]]
-    p1 <- mean[[6]]
-    p2 <- mean[[7]]
-    q0 <- mean[[8]]
-    q1 <- mean[[9]]
-    q2 <- mean[[10]]
-    e1 <- mean[[11]]
-    e2 <- mean[[12]]
-    res <- .baseFitPer(meth1,meth2,unmeth1,unmeth2,p1,p2,q0,e1,e2,s_t1,s_t2,s_c1,s_c2)
+    if(is.na(size.factor)){
+      s <- .sizeFactor2(cbind(control_ip,treated_ip,control_input,treated_input))
+      s_t1 <- s[1:length(control_ip[1,])]
+      s_t2 <- s[(length(control_ip[1,])+1):(length(cbind(control_ip,treated_ip)[1,]))]
+      s_c1 <- s[(length(cbind(control_ip,treated_ip)[1,])+1):(length(cbind(control_ip,treated_ip,control_input)[1,]))]
+      s_c2 <- s[(length(cbind(control_ip,treated_ip,control_input)[1,])+1):(length(cbind(control_ip,treated_ip,control_input,treated_input)[1,]))]
+    }else{
+      s_t1 <- size.factor$control_ip
+      s_t2 <- size.factor$treated_ip
+      s_c1 <- size.factor$control_input
+      s_c2 <- size.factor$treated_ip
+    }
+    mean <- .getBaseMean(control_ip,treated_ip,control_input,treated_input,s_t1,s_t2,s_c1,s_c2)
+    p0 <- mean[[1]]
+    p1 <- mean[[2]]
+    p2 <- mean[[3]]
+    q0 <- mean[[4]]
+    q1 <- mean[[5]]
+    q2 <- mean[[6]]
+    e1 <- mean[[7]]
+    e2 <- mean[[8]]
+    res <- .baseFitPer(control_ip,treated_ip,control_input,treated_input,p1,p2,q0,e1,e2,s_t1,s_t2,s_c1,s_c2)
     fit_t1<-res[[1]]
     fit_t2<-res[[2]]
     fit_c1<-res[[3]]
     fit_c2<-res[[4]]
+   
   }else if(mode=="pooled"){
-    meth<-rbind(meth1,meth2)
-    unmeth<-rbind(unmeth1,unmeth2)
-    mean <- .getPoolMean(meth,unmeth)
-    s_t1 <- mean[[1]]
-    s_t2 <- mean[[1]]
-    s_c1 <- mean[[2]]
-    s_c2 <- mean[[2]]
-    p1 <- mean[[3]]
+    meth<-rbind(control_ip,treated_ip)
+    unmeth<-rbind(control_input,treated_input)
+    if(is.na(size.factor)){
+      s <- .sizeFactor2(cbind(meth,unmeth))
+      s_t <- s[1:length(meth[1,])]
+      s_c <- s[(length(meth[1,])+1):(length(cbind(meth,unmeth)[1,]))]
+      s_t1 <- s_t
+      s_t2 <- s_t
+      s_c1 <- s_c
+      s_c2 <- s_c
+    }else{
+      s_t1 <- size.factor$control_ip
+      s_t2 <- size.factor$treated_ip
+      s_c1 <- size.factor$control_input
+      s_c2 <- size.factor$treated_ip
+      s_t <- c(s_t1,s_t2)
+      s_c <- c(s_c1,s_c2)
+    }
+    mean <- .getPoolMean(meth,unmeth,s_t,s_c)
+    p1 <- mean[[1]]
     p2 <- p1
     p0 <- p1
-    q0 <- mean[[4]]
+    q0 <- mean[[2]]
     q1 <- q0
     q2 <- q0
-    e1 <- mean[[5]]
+    e1 <- mean[[3]]
     e2 <- e1
-    res <- .baseFitCondition(meth,unmeth,p0,q0,e1,s_t1,s_c1)
+    res <- .baseFitCondition(meth,unmeth,p0,q0,e1,s_t,s_c)
     fit_t1<-res[[1]]
     fit_t2<-res[[1]]
     fit_c1<-res[[2]]
     fit_c2<-res[[2]]
+    
   }else if(mode=="blind"){
-    meth<-cbind(meth1,meth2)
-    unmeth<-cbind(unmeth1,unmeth2)
-    mean <- .getPoolMean(meth,unmeth)
-    s_t1 <- mean[[1]]
-    s_t2 <- mean[[1]]
-    s_c1 <- mean[[2]]
-    s_c2 <- mean[[2]]
-    p1 <- mean[[3]]
+    meth<-cbind(control_ip,treated_ip)
+    unmeth<-cbind(control_input,treated_input)
+    if(is.na(size.factor)){
+      s <- .sizeFactor2(cbind(meth,unmeth))
+      s_t <- s[1:length(meth[1,])]
+      s_c <- s[(length(meth[1,])+1):(length(cbind(meth,unmeth)[1,]))]
+      s_t1 <- s_t
+      s_t2 <- s_t
+      s_c1 <- s_c
+      s_c2 <- s_c
+    }else{
+      s_t1 <- size.factor$control_ip
+      s_t2 <- size.factor$treated_ip
+      s_c1 <- size.factor$control_input
+      s_c2 <- size.factor$treated_ip
+      s_t <- c(s_t1,s_t2)
+      s_c <- c(s_c1,s_c2)
+    }
+    mean <- .getPoolMean(meth,unmeth,s_t,s_c)
+    p1 <- mean[[1]]
     p2 <- p1
     p0 <- p1
-    q0 <- mean[[4]]
+    q0 <- mean[[2]]
     q1 <- q0
     q2 <- q0
-    e1 <- mean[[5]]
+    e1 <- mean[[3]]
     e2 <- e1
-    res <- .poolFit(meth,unmeth,p0,q0,e1,s_t1,s_c1)
+    res <- .poolFit(meth,unmeth,p0,q0,e1,s_t,s_c)
     fit_t1<-res[[1]]
     fit_t2<-res[[1]]
     fit_c1<-res[[2]]
     fit_c2<-res[[2]]
   }else if(mode=="auto"){
-    rep1 <- ncol(meth1)
-    rep2 <- ncol(meth2)
+    rep1 <- ncol(control_ip)
+    rep2 <- ncol(treated_ip)
     if((rep1==rep2&&rep1>1)||(rep1!=rep2&&min(rep1,rep2)>1)){
-      mean <- .getBaseMean(meth1,meth2,unmeth1,unmeth2)
-      s_t1 <- mean[[1]]
-      s_t2 <- mean[[2]]
-      s_c1 <- mean[[3]]
-      s_c2 <- mean[[4]]
-      p0 <- mean[[5]]
-      p1 <- mean[[6]]
-      p2 <- mean[[7]]
-      q0 <- mean[[8]]
-      q1 <- mean[[9]]
-      q2 <- mean[[10]]
-      e1 <- mean[[11]]
-      e2 <- mean[[12]]
-      res <- .baseFitPer(meth1,meth2,unmeth1,unmeth2,p1,p2,q0,e1,e2,s_t1,s_t2,s_c1,s_c2)
+      if(is.na(size.factor)){
+        s <- .sizeFactor2(cbind(control_ip,treated_ip,control_input,treated_input))
+        s_t1 <- s[1:length(control_ip[1,])]
+        s_t2 <- s[(length(control_ip[1,])+1):(length(cbind(control_ip,treated_ip)[1,]))]
+        s_c1 <- s[(length(cbind(control_ip,treated_ip)[1,])+1):(length(cbind(control_ip,treated_ip,control_input)[1,]))]
+        s_c2 <- s[(length(cbind(control_ip,treated_ip,control_input)[1,])+1):(length(cbind(control_ip,treated_ip,control_input,treated_input)[1,]))]
+      }else{
+        s_t1 <- size.factor$control_ip
+        s_t2 <- size.factor$treated_ip
+        s_c1 <- size.factor$control_input
+        s_c2 <- size.factor$treated_ip
+      }
+      mean <- .getBaseMean(control_ip,treated_ip,control_input,treated_input,s_t1,s_t2,s_c1,s_c2)
+      p0 <- mean[[1]]
+      p1 <- mean[[2]]
+      p2 <- mean[[3]]
+      q0 <- mean[[4]]
+      q1 <- mean[[5]]
+      q2 <- mean[[6]]
+      e1 <- mean[[7]]
+      e2 <- mean[[8]]
+      res <- res <- .baseFitPer(control_ip,treated_ip,control_input,treated_input,p1,p2,q0,e1,e2,s_t1,s_t2,s_c1,s_c2)
       fit_t1<-res[[1]]
       fit_t2<-res[[2]]
       fit_c1<-res[[3]]
       fit_c2<-res[[4]]
+
     }else if((rep1==rep2&&rep1==1)||(rep1!=rep2&&min(rep1,rep2)<2)){
-      meth<-cbind(meth1,meth2)
-      unmeth<-cbind(unmeth1,unmeth2)
-      mean <- .getPoolMean(meth,unmeth)
-      s_t1 <- mean[[1]]
-      s_t2 <- mean[[1]]
-      s_c1 <- mean[[2]]
-      s_c2 <- mean[[2]]
-      p1 <- mean[[3]]
+      meth=cbind(control_ip,treated_ip)
+      unmeth=cbind(control_input,treated_input)
+      
+      if(is.na(size.factor)){
+        s <- .sizeFactor2(cbind(meth,unmeth))
+        s_t <- s[1:length(meth[1,])]
+        s_c <- s[(length(meth[1,])+1):(length(cbind(meth,unmeth)[1,]))]
+        s_t1 <- s_t
+        s_t2 <- s_t
+        s_c1 <- s_c
+        s_c2 <- s_c
+      }else{
+        s_t1 <- size.factor$control_ip
+        s_t2 <- size.factor$treated_ip
+        s_c1 <- size.factor$control_input
+        s_c2 <- size.factor$treated_ip
+        s_t <- c(s_t1,s_t2)
+        s_c <- c(s_c1,s_c2)
+      }
+      mean <- .getPoolMean(meth,unmeth,s_t,s_c)
+      p1 <- mean[[1]]
       p2 <- p1
       p0 <- p1
-      q0 <- mean[[4]]
+      q0 <- mean[[2]]
       q1 <- q0
       q2 <- q0
-      e1 <- mean[[5]]
+      e1 <- mean[[3]]
       e2 <- e1
-      res <- .poolFit(meth,unmeth,p0,q0,e1,s_t1,s_c1)
+      
+      res <- .poolFit(meth,unmeth,p0,q0,e1,s_t,s_c)
       fit_t1<-res[[1]]
       fit_t2<-res[[1]]
       fit_c1<-res[[2]]
       fit_c2<-res[[2]]
+    
     }
   }
   
-  
-  #   s <- .sizeFactor2(cbind(meth1,meth2,unmeth1,unmeth2))
-  #   s_t1 <- s[1:length(meth1[1,])]
-  #   s_t2 <- s[(length(meth1[1,])+1):(length(cbind(meth1,meth2)[1,]))]
-  #   s_c1 <- s[(length(cbind(meth1,meth2)[1,])+1):(length(cbind(meth1,meth2,unmeth1)[1,]))]
-  #   s_c2 <- s[(length(cbind(meth1,meth2,unmeth1)[1,])+1):(length(cbind(meth1,meth2,unmeth1,unmeth2)[1,]))]
-  #   
-  #   # estimate probability of methylation under a condition
-  #   p1 <- .estimateP(meth1, unmeth1, s_t1, s_c1)
-  #   p2 <- .estimateP(meth2, unmeth2, s_t2, s_c2)
-  #   p0 <- .estimateP(cbind(meth1,meth2), cbind(unmeth1,unmeth2), c(s_t1,s_t2), c(s_c1,s_c2))
-  #   
-  #   # estimate the abundance of feature
-  #   q0 <- .estimateQ2(cbind(meth1,meth2), cbind(unmeth1,unmeth2), c(s_t1,s_t2), c(s_c1,s_c2),p0,useAll=TRUE)
-  #   q1 <- .estimateQ2(meth1,unmeth1,s_t1,s_c1,p0,useAll=TRUE)
-  #   q2 <- .estimateQ2(meth2,unmeth2,s_t2,s_c2,p0,useAll=TRUE)
-  #   
-  #   # estimate size e
-  #     e1 <- .estimateE(meth1,unmeth1,s_t1,s_c1,q0)
-  #     e2 <- .estimateE(meth2,unmeth2,s_t2,s_c2,q0)
-  #   
-  #   # calculate methylation reads count variance on common scale, condition 1
-  #   w_t1 <-.calculateW(meth1,s_t1,e1)
-  #   w_t2 <-.calculateW(meth2,s_t2,e2)
-  #   w_c1 <-.calculateW(unmeth1,s_c1,e1)
-  #   w_c2 <-.calculateW(unmeth2,s_c2,e2)
-  #   
-  #   # locfit 
-  #   fit_t1 <- .locfitW(p1,q0,w_t1)
-  #   fit_t2 <- .locfitW(p2,q0,w_t2)
-  #   fit_c1 <- .locfitW(p1,q0,w_c1)
-  #   fit_c2 <- .locfitW(p2,q0,w_c2)
-  
+
   if (is.na(output.dir)) {
     output.dir <- getwd()
   }
@@ -197,10 +224,10 @@ function(meth1,meth2,unmeth1,unmeth2,
   size2_c <- (mu2_c^2)/rowSums(raw_c2)
   
   # observation together
-  t1 <- rowSums(meth1)
-  t2 <- rowSums(meth2)
-  c1 <- rowSums(unmeth1)
-  c2 <- rowSums(unmeth2)
+  t1 <- rowSums(control_ip)
+  t2 <- rowSums(treated_ip)
+  c1 <- rowSums(control_input)
+  c2 <- rowSums(treated_input)
   t <- t1 + t2
   n1 <- t1 + c1
   n2 <- t2 + c2
@@ -210,16 +237,26 @@ function(meth1,meth2,unmeth1,unmeth2,
   res <- .quadNBtest(t1,t,n1,n2,mu1_t,mu2_t,mu1_c,mu2_c,size1_t,size2_t,size1_c,size2_c)
   
   # add fc
-  fc <- log2(p1/p2)
-  m1 <- rowSums(t(t(meth1)/s_t1))
-  m2 <- rowSums(t(t(meth2)/s_t2))
-  u1 <- rowSums(t(t(unmeth1)/s_c1))
-  u2 <- rowSums(t(t(unmeth2)/s_c2))
+  p1 <- .estimateP(control_ip,control_input,s_t1,s_c1)
+  p2 <- .estimateP(treated_ip,treated_input,s_t2,s_c2)
+  log2.RR <- log2(p2/p1)
+  log2.RR <- (log2.RR-mean(log2.RR))/var(log2.RR)
+  
+  p.treated <- p2
+  p.control <- p1
+  
+  log2.OR <- log2(rowSums(treated_ip/s_t2)/rowSums(treated_input/s_c2)/rowSums(control_ip/s_t1)/rowSums(control_input/s_c1))
+  log2.OR <- (log2.OR-mean(log2.OR))/var(log2.OR)
+  m1 <- rowSums(t(t(control_ip)/s_t1))
+  m2 <- rowSums(t(t(treated_ip)/s_t2))
+  u1 <- rowSums(t(t(control_input)/s_c1))
+  u2 <- rowSums(t(t(treated_input)/s_c2))
   mfc <- log2(m1)-log2(m2)
   ufc <- log2(u1)-log2(u2)
   
   padj <- p.adjust( res[,1], method="BH" )
-  res <- data.frame(res,fc,q0,padj)
+  res <- data.frame(p.treated,p.control,log2.RR,log2.OR,res[,1],q0,padj)
+  colnames(res) <- c("p.treated","p.control","log2.RR","log2.OR","pvalue","q","padj")
     #res <- res2[,c(1,3:7)]
   #path=getwd()
   path <- paste(output.dir,"dif_meth.xls",sep = '/')

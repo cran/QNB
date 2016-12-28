@@ -3,24 +3,19 @@
 \alias{QNB}
 \docType{package}
 \title{
-Differential RNA Methylation Analysis with Quad-Negative-Binomial Model
+ Differential RNA Methylation Analysis for Count-Based Small-Sample Sequencing Data 
+       with a Quad-Negative Binomial Model
 }
 \description{
-With high throughput sequencing techniques, such as MeRIP-Seq, transcriptome-wide RNA methylation profile is now available as count-based measurements, with which it is often of special interests to study the dynamics in post-transcriptional regulation via differential RNA methylation analysis. In differential RNA methylation analysis, the sample size of RNA methylation experiment is usually very small due to its cost, making the inference very difficult. 
-Meanwhile, there exist a large number of very lowly expressed genes whose methylation level 
-cannot be accurately estimated due to limited sequencing depth.We present QNB, a statistical 
-approach for differential RNA methylation analysis with count-based small-sample sequencing 
-data. The method is based on 4 independent negative binomial dis-tributions, and with their 
-variances and means linked by local regressions, respectively. And the algorithm can be in 
-theory applied to data generated from other sequencing techniques related RNA modifications, 
-including but not limited to RNA BS-Seq, Par-CLIP, RIP-Seq, etc.Please don't hesitate to contact <liulian19860905@163.com> if you have any questions.
+As a newly emerged research area, RNA epigenetics has drawn increasing attention recently for the participation of RNA methylation and other modifications in a number of crucial biological processes. Thanks to high throughput sequencing techniques, such as m6A-Seq, transcriptome-wide RNA methylation profile is now available in the form of count-based data, with which it is often of interests to study the dynamics in epitranscriptomic layer. However, the sample size of RNA methylation experiment is usually very small due to its costs; and additionally, there usually exist a large number of genes whose methylation level cannot be accurately estimated due to their low expression level, making differential RNA methylation analysis a difficult task.
+We present QNB, a statistical approach for differential RNA methylation analysis with count-based small-sample sequencing data. The method is based on 4 independent negative binomial distributions with their variances and means linked by local regressions. QNB showed improved performance on simulated and real m6A-Seq datasets when compared with competing algorithms. And the QNB model is also applicable to other datasets related RNA modifications, including but not limited to RNA bisulfite sequencing, m1A-Seq, Par-CLIP, RIP-Seq, etc. Please don't hesitate to contact <liulian19860905@163.com> if you have any questions.
 }
 \details{
 \tabular{ll}{
 Package: \tab QNB\cr
 Type: \tab Package\cr
-Version: \tab 1.0.2\cr
-Date: \tab 2016-11-30\cr
+Version: \tab 1.1.2\cr
+Date: \tab 2016-12-25\cr
 License: \tab GPL-2\cr
 }
 }
@@ -31,6 +26,5 @@ Maintainer: <liulian19860905@163.com>
 \keyword{ differential RNA methylation, quad-negative-binomial model }
 
 \examples{
-library(QNB)
-?QNB
+  #See the details in qnbtest
 }

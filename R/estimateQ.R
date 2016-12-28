@@ -1,4 +1,4 @@
-.estimateQ <- function(meth,unmeth,size_t,size_c,p,useAll=FALSE){
+.estimateQ <- function(meth,unmeth,size_t,size_c,p,useAll=TRUE){
   if (useAll) {
     temp_t <- t(t(meth)/size_t)
     temp_c <- t(t(unmeth)/size_c)

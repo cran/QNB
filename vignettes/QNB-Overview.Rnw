@@ -25,7 +25,7 @@
 
 \title{An Introduction to \Rpackage{QNB}}
 \author{Lian Liu <liulian19860905@163.com>}
-\date{Modified: 30 Nov, 2016. Compiled: \today }
+\date{Modified: 25 Dec, 2016. Compiled: \today }
 
 \begin{document}
 \SweaveOpts{concordance=TRUE}
@@ -36,27 +36,25 @@ options(width=60)
 @ 
 
 \section{Introduction}
-With high throughput sequencing techniques, such as MeRIP-Seq, transcriptome-wide RNA 
-methylation profile is now available as count-based measurements, with which it is often of special interests to study the dynamics in post-transcriptional regulation via differential 
-RNA methylation analysis. However, the sample size of RNA methylation experiment is usually very small due to its cost, making the inference very difficult. Meanwhile, there exist a 
-large number of very lowly expressed genes whose methylation level cannot be accurately estimated due to limited sequencing depth.
-The \Rpackage{QNB} R-package is a statistical approach for differential RNA methylation analysis with count-based small-sample sequencing data. The method is based on 4 independent negative binomial distributions, and with their variances and means linked by local regressions, respectively. Please don't hesitate to contact <liulian19860905@163.com> if you have any problem. The inputs of the main function \Rfunction{qnbtest} are four reads count matrix for IP samples of two conditions and Input samples of two conditions.The \Rpackage{QNB} package fullfills the following one key function:
+As a newly emerged research area, RNA epigenetics has drawn increasing attention recently for the participation of RNA methylation and other modifications in a number of crucial biological processes. Thanks to high throughput sequencing techniques, such as m6A-Seq, transcriptome-wide RNA methylation profile is now available in the form of count-based data, with which it is often of interests to study the dynamics in epitranscriptomic layer. However, the sample size of RNA methylation experiment is usually very small due to its costs; and additionally, there usually exist a large number of genes whose methylation level cannot be accurately estimated due to their low expression level, making differential RNA methylation analysis a difficult task.
+We present \Rpackage{QNB} R-package, a statistical approach for differential RNA methylation analysis with count-based small-sample sequencing data. The method is based on 4 independent negative binomial dis-tributions with their variances and means linked by local regressions. QNB showed improved performance on simulated and real m6A-Seq datasets when compared with competing algorithms. And the QNB model is also applicable to other datasets related RNA modifications, including but not limited to RNA bisulfite sequencing, m1A-Seq, Par-CLIP, RIP-Seq, etc. Please don't hesitate to contact <liulian19860905@163.com> if you have any problem. 
+The inputs of the main function \Rfunction{qnbtest} are four reads count data frame for IP samples of two conditions and Input samples of two conditions.The \Rpackage{QNB} package fullfills the following one key function:
 \begin{itemize}
-  \item differential RNA methylation analysis based on a model using quad-negative-binomial distribution 
+  \item differential RNA methylation analysis for count-based small-sample sequencing data with a quad-negative binomial model
 \end{itemize}
 
 We will in the next see how the the main functions can be accomplished in a single command. 
 
 
 \section{Input data}
-As input, the \Rpackage{QNB} package expects count data from two conditions (e.\,g., treated and untreated) as obtained, e.\,g., from MeRIP-Seq, in the form of two rectangular tables of integer values for each condition, one is Input control sample and another is IP sample.
+As input, the \Rpackage{QNB} package expects count data from two conditions (e.\,g., treated and control) as obtained, e.\,g., from MeRIP-Seq, in the form of two rectangular tables of integer values for each condition, one is Input control sample and another is IP sample.
 The table cell in the $i$-th row and the $j$-th column of the table shows the reads count of the methylation site $i$ in sample $j$.
 
 The count values must be raw counts of sequencing reads. So, please do not supply other quantities, such as (rounded) normalized counts -- this will lead to nonsensical results.                                                                                                                                                                                                    
 
 In this vignette, we will work with DAA dataset. The original DAA raw data in SRA format was obtained directly GEO (GSE48037), which consists of 3 IP and 3 Input MeRIP-Seq replicates obtained under wild type condition and after DAA treatment, respectively (a total of 12 libraries). The short sequencing reads are firstly aligned to human genome assembly hg19 with Tophat2\cite{Kim:2013}, and then get RNA N6-methyl-adenosine (m6A) sites using \Rpackage {exomePeak} R/Bioconductor package~\cite{Meng:2013} with UCSC gene annotation database~\cite{Karolchik:2014}. In the peak calling step, to obtain a consensus RNA methylation site set between two experimental conditions (wild type and DAA treatment), we merged 6 IP samples and 6 Input samples, respectively. Then we used Bioconductor packages on R platform to obtain the reads count matrix. In the matrix, it includes the reads counts of m6A methylation sites from IP and Input samples (each with 3 replicates) under two conditions. 
 
-\section{Differential Methylation Analysis}
+\section{Differential RNA Methylation Analysis}
 The main function of \Rpackage{QNB} R-package is to analyse differential RNA methylation. Meths are the reads count matrix of IP samples from two conditions, and unmeths are Input control samples from two condition. To get the differential RNA methylation, we estimate the dispersion for each site between treated (including IP and Input control sample) and untreated (including IP and Input control sample). In addtion, IP and Input control samples must be the same replicates, but it is may be the different replicates under two conditons.
 
 To estimate the dispersion, there are four ways how the empirical dispersion can be computed:
@@ -65,9 +63,21 @@ To estimate the dispersion, there are four ways how the empirical dispersion can
 \item pooled - Use the samples from all conditions with replicates to estimate a single pooled empirical dispersion value, called \texttt{"pooled"}, and assign it to all samples.
 \item per-condition - For each condition with replicates, compute an empirical dispersion value by considering the data from samples for this condition. 
 \item blind - Ignore the sample labels and compute an empirical dispersion value as if all samples were replicates of a single condition. This can be done even if there are no biological replicates. 
-\item auto - Select mode according to the size of samples automatically. The default is auto.
+\item auto - Select mode according to the size of samples automatically. The default is auto. By default, QNB package implements the \texttt{"per-condition"} mode for a more sensitive estimation of the raw variance parameter when biological replicates are provided; while the \texttt{"blind"} mode is implemented when biological replicates are not available.
+
 
 \textbf{Other parameters:}
+
+\item size.factor - A list of size factor. 
+The size factor of the IP and 
+input sample of the biological replicate and directly reflect their
+sequencing depth. 
+If \Rcode{size.factor=NA}, \Rpackage{QNB} 
+will compute the size factor of 
+IP and input sample of each replicate. If user could provide the size factor, 
+the names of each term must be \texttt{control\_ip, treated\_ip, control\_input, 
+treated\_input} in list.
+
 
 \item plot.dispersion - The default is TRUE. If \Rcode{plot.dispersion=FALSE}, it will not save the dispersion figure.
 
@@ -77,10 +87,10 @@ To estimate the dispersion, there are four ways how the empirical dispersion can
 Let us firstly load the package and get the toy data (came with the package) ready.
 <<Input file>>=
 library(QNB)
-f1 = system.file("extdata", "meth1.txt", package="QNB")
-f2 = system.file("extdata", "meth2.txt", package="QNB")
-f3 = system.file("extdata", "unmeth1.txt", package="QNB")
-f4 = system.file("extdata", "unmeth2.txt", package="QNB")
+f1 = system.file("extdata", "control_ip.txt", package="QNB")
+f2 = system.file("extdata", "treated_ip.txt", package="QNB")
+f3 = system.file("extdata", "control_input.txt", package="QNB")
+f4 = system.file("extdata", "treated_input.txt", package="QNB")
 
 meth1 = read.table(f1, header=TRUE)
 meth2 = read.table(f2, header=TRUE)
@@ -94,7 +104,7 @@ head(unmeth1)
 \subsection{Standard comparison between two experimental conditions}
 
 When there are replicates under two conditions, we could select \texttt{mode="per-condition"}
-or \texttt{mode="pooled"} to estimate the dispersion. The default is \texttt{auto}. If \texttt{mode="per-condition"}, we estimate one dispersion for each condition, respectively. 
+or \texttt{mode="pooled"} to estimate the dispersion. The default is \texttt{auto}. By default, QNB package implements the "per-conditon" mode for a more sensitive estimation of the raw variance parameter when biological replicates are provided; while the "blind" mode is implemented when biological replicates are not available. If \texttt{mode="per-condition"}, we estimate one dispersion for each condition, respectively. 
 If \texttt{mode="pooled"}, we combind all replicates to generate one dataset from control samples and IP samples, then estimate one dispersion for two conditions.
 
 <<per-conditon>>=
@@ -102,23 +112,52 @@ result = qnbtest(meth1, meth2, unmeth1, unmeth2, mode="per-condition")
 head(result)
 @
 
-The results will be saved in the specified output directory, including the dispersion figure(if \Rcode{plot.dispersion=TRUE)} and the result table (including 4 columns (pvalue, log2(fold-change), q, FDR)). The following figure is the dispersion figure. The first row is the wild type dispersion of Input and IP samples, and the second row is the DAA dispersion of Input and IP samples.
+The results will be saved in the specified output directory, 
+including the dispersion figure(if \Rcode{plot.dispersion=TRUE)} 
+and the result table 
+(including 7 columns (p.treated, p.control, log2.RR, log2.OR, pvalue, q, padj)). 
+
 \begin{itemize}
-  \item pvalue - Indicate the significance of the methylation site as an RNA differential methylation site
-  \item log2.fc - The log2 odds ratio between IP sample and Input sample.
-  \item q -  The standardized feature abundance, which is proportional to the expression level of the RNA transcript.
-  \item FDR - FDR of the methylation site, indicating the significance of the peak as an RNA differential methylation site after multiple hypothesis correction usting BH method.  
+  \item p.treated - The percentage of methylation under treated condition.
+  
+  \item p.control - The percentage of methylation under control condition.
+  
+  \item log2.RR - The normalized risk ratio.
+  
+  \item log2.OR - The normalized odds ratio.
+  
+  \item pvalue - Indicate the significance of the methylation site as an RNA 
+                 differential methylation site
+
+  \item q - The standardized feature abundance, which is proportional to the expression                    
+            level of the RNA transcript.
+  
+  \item padj - The FDR of the methylation site, indicating the significance of the peak   
+               as an RNA differential methylation site after multiple hypothesis         
+               correction usting BH method.  
+    
 \end{itemize}
 
-\begin{figure}
-\centering
-\includegraphics[width=10cm]{dispersion}
-\caption{
-  \textbf{The dispersion of reads count on common scale in DAA dataset.} 
-The first row is the wild type dispersion of Input and IP samples, and the second row is the DAA dispersion of Input and IP samples. In each dataset, the variance of two conditions is very similar, but there are slight difference between them. Generally, the variance increases following the feature abundance $\log(\textrm{q}+1)$ and absolute methylation level $p$.}
- 
-\label{fig:dispersion}
-\end{figure}
+In QNB, we compute size factor of IP and input samples using the 
+``geometric'' approach developed for RNA-Seq data. 
+If \texttt{size.factor=NA}, \Rpackage{QNB}  will compute size factor 
+according to the samples which are provided, otherwise, user could 
+provide the size factor according to their request. The format of size 
+factor must be a list, and the name of each term must be 
+\texttt{control\_ip, treated\_ip, control\_input, 
+treated\_input} in list. 
+
+<<provide size factor>>=
+size.factor = list(control_ip=c(0.9,0.9,0.9),
+                   treated_ip=c(0.9,0.9,0.9), 
+                   control_input=c(0.9,0.9,0.9),
+                   treated_input=c(0.9,0.9,0.9))
+                   
+result = qnbtest(meth1,meth2,unmeth1,unmeth2,
+                 size.factor=size.factor,
+                 mode="per-condition")
+
+@
 
 \subsection{Comparison without replicates}
 Proper replicates are essential to interpret a biological experiment. After all, any attempt to work without replicates will lead to conclusions of very limited reliability. But the \Rpackage{QNB} package can deal with them.
@@ -127,10 +166,10 @@ If you have replicates for one condition but not for the other, or without any r
 
 
 <<without replicates>>=
-f1 = system.file("extdata", "no_rep_meth1.txt", package="QNB")
-f2 = system.file("extdata", "no_rep_meth2.txt", package="QNB")
-f3 = system.file("extdata", "no_rep_unmeth1.txt", package="QNB")
-f4 = system.file("extdata", "no_rep_unmeth2.txt", package="QNB")
+f1 = system.file("extdata", "no_rep_controlip.txt", package="QNB")
+f2 = system.file("extdata", "no_rep_treatedip.txt", package="QNB")
+f3 = system.file("extdata", "no_rep_controlinput.txt", package="QNB")
+f4 = system.file("extdata", "no_rep_treatedinput.txt", package="QNB")
 
 no_rep_meth1 = read.table(f1, header=TRUE)
 no_rep_meth2 = read.table(f2, header=TRUE)
@@ -149,7 +188,7 @@ result = qnbtest(no_rep_meth1,
 
 \subsection{Select mode automatically}
 
-If you could not decide which mode to estimate dispersion, \texttt{mode="auto"} will select suitable way to estimate dispersion according to the replicates.
+If you could not decide which mode to estimate dispersion, \texttt{mode="auto"} will select suitable way to estimate dispersion according to the replicates. By default, QNB package implements the "per-conditon" mode for a more sensitive estimation of the raw variance parameter when biological replicates are provided; while the "blind" mode is implemented when biological replicates are not available.
 
 <<automatically>>=
 result = qnbtest(meth1, meth2, unmeth1, unmeth2)
