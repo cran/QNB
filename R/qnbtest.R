@@ -6,7 +6,7 @@ function(control_ip,treated_ip,control_input,treated_input,
                     output.dir = NA) {
   print("Estimating dispersion for each RNA methylation site, this will take a while ...")
   if(mode=="per-condition"){
-    if(is.na(size.factor)){
+    if(anyNA(size.factor)){
       s <- .sizeFactor2(cbind(control_ip,treated_ip,control_input,treated_input))
       s_t1 <- s[1:length(control_ip[1,])]
       s_t2 <- s[(length(control_ip[1,])+1):(length(cbind(control_ip,treated_ip)[1,]))]
@@ -36,7 +36,7 @@ function(control_ip,treated_ip,control_input,treated_input,
   }else if(mode=="pooled"){
     meth<-rbind(control_ip,treated_ip)
     unmeth<-rbind(control_input,treated_input)
-    if(is.na(size.factor)){
+    if(anyNA(size.factor)){
       s <- .sizeFactor2(cbind(meth,unmeth))
       s_t <- s[1:length(meth[1,])]
       s_c <- s[(length(meth[1,])+1):(length(cbind(meth,unmeth)[1,]))]
@@ -70,7 +70,7 @@ function(control_ip,treated_ip,control_input,treated_input,
   }else if(mode=="blind"){
     meth<-cbind(control_ip,treated_ip)
     unmeth<-cbind(control_input,treated_input)
-    if(is.na(size.factor)){
+    if(anyNA(size.factor)){
       s <- .sizeFactor2(cbind(meth,unmeth))
       s_t <- s[1:length(meth[1,])]
       s_c <- s[(length(meth[1,])+1):(length(cbind(meth,unmeth)[1,]))]
@@ -104,7 +104,7 @@ function(control_ip,treated_ip,control_input,treated_input,
     rep1 <- ncol(control_ip)
     rep2 <- ncol(treated_ip)
     if((rep1==rep2&&rep1>1)||(rep1!=rep2&&min(rep1,rep2)>1)){
-      if(is.na(size.factor)){
+      if(anyNA(size.factor)){
         s <- .sizeFactor2(cbind(control_ip,treated_ip,control_input,treated_input))
         s_t1 <- s[1:length(control_ip[1,])]
         s_t2 <- s[(length(control_ip[1,])+1):(length(cbind(control_ip,treated_ip)[1,]))]
@@ -135,7 +135,7 @@ function(control_ip,treated_ip,control_input,treated_input,
       meth=cbind(control_ip,treated_ip)
       unmeth=cbind(control_input,treated_input)
       
-      if(is.na(size.factor)){
+      if(anyNA(size.factor)){
         s <- .sizeFactor2(cbind(meth,unmeth))
         s_t <- s[1:length(meth[1,])]
         s_c <- s[(length(meth[1,])+1):(length(cbind(meth,unmeth)[1,]))]
@@ -240,13 +240,11 @@ function(control_ip,treated_ip,control_input,treated_input,
   p1 <- .estimateP(control_ip,control_input,s_t1,s_c1)
   p2 <- .estimateP(treated_ip,treated_input,s_t2,s_c2)
   log2.RR <- log2(p2/p1)
-  log2.RR <- (log2.RR-mean(log2.RR))/var(log2.RR)
   
   p.treated <- p2
   p.control <- p1
   
-  log2.OR <- log2(rowSums(treated_ip/s_t2)/rowSums(treated_input/s_c2)/rowSums(control_ip/s_t1)/rowSums(control_input/s_c1))
-  log2.OR <- (log2.OR-mean(log2.OR))/var(log2.OR)
+  log2.OR <- log2((rowSums(t(t(treated_ip)/s_t2))/rowSums(t(t(treated_input)/s_c2)))/(rowSums(t(t(control_ip)/s_t1))/rowSums(t(t(control_input)/s_c1))))
   m1 <- rowSums(t(t(control_ip)/s_t1))
   m2 <- rowSums(t(t(treated_ip)/s_t2))
   u1 <- rowSums(t(t(control_input)/s_c1))

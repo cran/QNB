@@ -34,14 +34,24 @@ head(result)
 ###################################################
 ### code chunk number 4: provide size factor
 ###################################################
-size.factor = list(control_ip=c(0.9,0.9,0.9),
-                   treated_ip=c(0.9,0.9,0.9), 
-                   control_input=c(0.9,0.9,0.9),
-                   treated_input=c(0.9,0.9,0.9))
+total_number_reads_control_ip <- c(3015921,2563976,198530)
+total_number_reads_treated_ip <- c(1565101,152389,323569)
+total_number_reads_control_input <- c(108561,302534,108123)
+total_number_reads_treated_input <- c(301270,208549,308654)
 
-result = qnbtest(meth1,meth2,unmeth1,unmeth2,
-                 size.factor=size.factor,
-                 mode="per-condition")
+standard_library_size <- exp(mean(log( c(total_number_reads_control_ip,
+                                         total_number_reads_treated_ip,
+                                         total_number_reads_control_input,
+                                         total_number_reads_treated_input))))
+
+size.factor <- list(control_ip = total_number_reads_control_ip/standard_library_size,
+                    treated_ip = total_number_reads_treated_ip/standard_library_size,
+                    control_input = total_number_reads_control_input/standard_library_size,
+                    treated_input = total_number_reads_treated_input/standard_library_size)
+
+result <- qnbtest(meth1, meth2, unmeth1, unmeth2,
+                  size.factor = size.factor)
+
 
 ###################################################
 ### code chunk number 5: <Differetial methylation analysis without replicates
