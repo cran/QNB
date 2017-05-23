@@ -4,6 +4,14 @@ function(control_ip,treated_ip,control_input,treated_input,
                     mode="auto",
                     plot.dispersion=TRUE,
                     output.dir = NA) {
+  options(warn =-1)
+  control_ip <- data.frame(control_ip)
+  treated_ip <- data.frame(treated_ip)
+  control_input <- data.frame(control_input)
+  treated_input <- data.frame(treated_input)
+  if( any( ncol(control_ip)!=ncol(control_input), ncol(treated_ip)!=ncol(treated_input)) ){
+    stop( "IP sample and control sample must be the same replicates" )
+  } 
   print("Estimating dispersion for each RNA methylation site, this will take a while ...")
   if(mode=="per-condition"){
     if(anyNA(size.factor)){
@@ -255,6 +263,7 @@ function(control_ip,treated_ip,control_input,treated_input,
   padj <- p.adjust( res[,1], method="BH" )
   res <- data.frame(p.treated,p.control,log2.RR,log2.OR,res[,1],q0,padj)
   colnames(res) <- c("p.treated","p.control","log2.RR","log2.OR","pvalue","q","padj")
+  
     #res <- res2[,c(1,3:7)]
   #path=getwd()
   path <- paste(output.dir,"dif_meth.xls",sep = '/')
