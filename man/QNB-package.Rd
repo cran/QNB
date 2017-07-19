@@ -14,8 +14,8 @@ We present QNB, a statistical approach for differential RNA methylation analysis
 \tabular{ll}{
 Package: \tab QNB\cr
 Type: \tab Package\cr
-Version: \tab 1.1.8\cr
-Date: \tab 2017-05-23\cr
+Version: \tab 1.1.9\cr
+Date: \tab 2017-07-10\cr
 License: \tab GPL-2\cr
 }
 }
