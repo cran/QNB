@@ -3,8 +3,8 @@ Type: Package
 Title: Differential RNA Methylation Analysis for Count-Based
         Small-Sample Sequencing Data with a Quad-Negative Binomial
         Model
-Version: 1.1.9
-Date: 2017-07-19
+Version: 1.1.10
+Date: 2017-09-15
 Author: Lian Liu <liulian19860905@163.com>
 Maintainer: Lian Liu <liulian19860905@163.com>
 Description: As a newly emerged research area, RNA epigenetics has drawn increasing 
@@ -29,7 +29,7 @@ Description: As a newly emerged research area, RNA epigenetics has drawn increas
             <liulian19860905@163.com> if you have any questions.
 License: GPL-2
 Depends: locfit,GenomicFeatures,Rsamtools,exomePeak
-Packaged: 2017-07-19 12:13:17 UTC; S41-70
+Packaged: 2017-09-15 08:19:36 UTC; S41-70
 NeedsCompilation: no
 Repository: CRAN
-Date/Publication: 2017-07-19 13:50:48 UTC
+Date/Publication: 2017-09-16 03:24:00 UTC

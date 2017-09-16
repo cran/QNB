@@ -82,10 +82,10 @@ function(control_ip,treated_ip,control_input,treated_input,
       s <- .sizeFactor2(cbind(meth,unmeth))
       s_t <- s[1:length(meth[1,])]
       s_c <- s[(length(meth[1,])+1):(length(cbind(meth,unmeth)[1,]))]
-      s_t1 <- s_t
-      s_t2 <- s_t
-      s_c1 <- s_c
-      s_c2 <- s_c
+      s_t1 <- s[1:length(control_ip[1,])]
+      s_t2 <- s[(length(control_ip[1,])+1):(length(cbind(control_ip,treated_ip)[1,]))]
+      s_c1 <- s[(length(cbind(control_ip,treated_ip)[1,])+1):(length(cbind(control_ip,treated_ip,control_input)[1,]))]
+      s_c2 <- s[(length(cbind(control_ip,treated_ip,control_input)[1,])+1):(length(cbind(control_ip,treated_ip,control_input,treated_input)[1,]))]
     }else{
       s_t1 <- size.factor$control_ip
       s_t2 <- size.factor$treated_ip
@@ -147,10 +147,10 @@ function(control_ip,treated_ip,control_input,treated_input,
         s <- .sizeFactor2(cbind(meth,unmeth))
         s_t <- s[1:length(meth[1,])]
         s_c <- s[(length(meth[1,])+1):(length(cbind(meth,unmeth)[1,]))]
-        s_t1 <- s_t
-        s_t2 <- s_t
-        s_c1 <- s_c
-        s_c2 <- s_c
+        s_t1 <- s[1:length(control_ip[1,])]
+        s_t2 <- s[(length(control_ip[1,])+1):(length(cbind(control_ip,treated_ip)[1,]))]
+        s_c1 <- s[(length(cbind(control_ip,treated_ip)[1,])+1):(length(cbind(control_ip,treated_ip,control_input)[1,]))]
+        s_c2 <- s[(length(cbind(control_ip,treated_ip,control_input)[1,])+1):(length(cbind(control_ip,treated_ip,control_input,treated_input)[1,]))]
       }else{
         s_t1 <- size.factor$control_ip
         s_t2 <- size.factor$treated_ip

@@ -1,4 +1,4 @@
-68d624f8de753d31824807c4b0926611 *DESCRIPTION
+59942243e1478544dcd5262882d2d60a *DESCRIPTION
 d5c8aac971e8b4dbf3d7bfdbeba6188a *NAMESPACE
 37759f5bec329043e6b0a511b6349ac5 *NEWS
 1461871a63d3a7f223f38018b93e936d *R/baseFitCondition.R
@@ -14,7 +14,7 @@ f4ed0af4d4a99a3eabc468dfdba29a22 *R/getPoolMean.R
 7d9e5131254b3d8ec2360ce7c3ca564f *R/locfitW.R
 a9fc9fea3948829f2fcaee755594e4c6 *R/plotDispersion.R
 d44805241ddfe7d561e3227327245aff *R/poolFit.R
-f3270b9253eaa5675f3408a5c3a08c64 *R/qnbtest.R
+fe3d7a81fe5802ee65765455b9643add *R/qnbtest.R
 62e7853f7830d3fdbb15be3472f545b7 *R/quadNBtest.R
 5b7eea97ca824bf0de52c966c82edc7e *R/sizeFactor.R
 bae87f2edae76a682c7906ff113f6b5c *R/sizeFactor2.R
@@ -30,7 +30,7 @@ e2a17fdae2aea94b011eb7699f0f891f *inst/doc/QNB-Overview.R
 0f5e1902ef7da63e48d6d831296a144c *inst/extdata/no_rep_treatedip.txt
 5895f3076dc45dd483b8b7209764cb1e *inst/extdata/treated_input.txt
 3271f22a24d27a9921c0a3bfccc4b3bb *inst/extdata/treated_ip.txt
-2e8ce9c7ec7be1f73b24faec73d32edb *man/QNB-package.Rd
+40b4473cb8b45311f9b9e9ba2783cb90 *man/QNB-package.Rd
 d738741af3a10b9ebf5e466040a8d48d *man/qnbtest.Rd
 6e07c3bc650f3635edf69849c9946938 *vignettes/QNB-Overview.Rnw
 3e6940350a25f5248c56864464fae7f5 *vignettes/QNB.bib
