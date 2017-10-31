@@ -1,4 +1,4 @@
-59942243e1478544dcd5262882d2d60a *DESCRIPTION
+30a91ab328902cfe8d4bef5d652a1a4e *DESCRIPTION
 d5c8aac971e8b4dbf3d7bfdbeba6188a *NAMESPACE
 37759f5bec329043e6b0a511b6349ac5 *NEWS
 1461871a63d3a7f223f38018b93e936d *R/baseFitCondition.R
@@ -20,8 +20,8 @@ fe3d7a81fe5802ee65765455b9643add *R/qnbtest.R
 bae87f2edae76a682c7906ff113f6b5c *R/sizeFactor2.R
 fedca422ecdf548386beb939af1670d5 *build/vignette.rds
 e2a17fdae2aea94b011eb7699f0f891f *inst/doc/QNB-Overview.R
-6e07c3bc650f3635edf69849c9946938 *inst/doc/QNB-Overview.Rnw
-63a85af9bd40c0abfbe086f0b4fb1c58 *inst/doc/QNB-Overview.pdf
+ba18408f156f3b6ef74e9b9182497dbc *inst/doc/QNB-Overview.Rnw
+1c98db1f78f188af160a2b5fddb1eaf8 *inst/doc/QNB-Overview.pdf
 03e7ccc14728e3e33496cc44663dccac *inst/extdata/control_input.txt
 9cab76aba06442356eea4749013f8105 *inst/extdata/control_ip.txt
 9f50b87ba1e8a4315655c536efb3f6e7 *inst/extdata/no_rep_controlinput.txt
@@ -30,7 +30,7 @@ e2a17fdae2aea94b011eb7699f0f891f *inst/doc/QNB-Overview.R
 0f5e1902ef7da63e48d6d831296a144c *inst/extdata/no_rep_treatedip.txt
 5895f3076dc45dd483b8b7209764cb1e *inst/extdata/treated_input.txt
 3271f22a24d27a9921c0a3bfccc4b3bb *inst/extdata/treated_ip.txt
-40b4473cb8b45311f9b9e9ba2783cb90 *man/QNB-package.Rd
+ab274652e7de939b1434308fe2b3ea7d *man/QNB-package.Rd
 d738741af3a10b9ebf5e466040a8d48d *man/qnbtest.Rd
-6e07c3bc650f3635edf69849c9946938 *vignettes/QNB-Overview.Rnw
+ba18408f156f3b6ef74e9b9182497dbc *vignettes/QNB-Overview.Rnw
 3e6940350a25f5248c56864464fae7f5 *vignettes/QNB.bib

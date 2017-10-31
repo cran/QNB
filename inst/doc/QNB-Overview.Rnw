@@ -25,7 +25,7 @@
 
 \title{An Introduction to \Rpackage{QNB}}
 \author{Lian Liu <liulian19860905@163.com>}
-\date{Modified: 6 Jul, 2017. Compiled: \today }
+\date{Modified: 30 Oct, 2017. Compiled: \today }
 
 \begin{document}
 \SweaveOpts{concordance=TRUE}
